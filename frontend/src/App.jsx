@@ -2,6 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchTransactions, createTransaction } from "../api/api";
 import { useState } from "react";
 
+import TransactionForm from "./components/TransactionForm";
+import TransactionList from "./components/TransactionList";
+
 function App() {
     const queryClient = useQueryClient();
 
@@ -17,33 +20,52 @@ function App() {
         },
     });
 
-    const [amount, setAmount] = useState("");
+    // const [amount, setAmount] = useState("");
+
+    const [form, setForm] = useState({
+        amount: "",
+        transaction_type: "income",
+        category: "",
+        description: "",
+    });
 
     const handleSubmit = () => {
+
+        if (!form.amount) return;  // If no value to skip
+
         mutation.mutate({
-            amount: parseFloat(amount),
-            transaction_type: "income",
+            amount: parseFloat(form.amount),  // Data entered as string, need to convert to float to fit Pydantic data schema
+            transaction_type: form.transaction_type,
+            category: form.category,
+            description: form.description
         });
+
+        // Reset form
+        setForm({
+            amount: "",
+            type: "income",
+            category: "",
+            description: "",
+          });
     };
 
     return (
         <div>
             <h1>Cash Flow Tracker</h1>
 
-            <input
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Amount"
-            />
-            
-            <button onClick={handleSubmit}>Add</button>
+            <h2>Transaction Input</h2>
 
-            <ul>
-                {transactions.map((t) => (
-                        <li key={t.id}>{t.transaction_type}: {t.amount}</li>
-                    )
-                )}
-            </ul>
+            <TransactionForm 
+                form={form}
+                setForm={setForm}
+                onAdd={handleSubmit}
+            />
+
+            <h2>Transactions Recorded</h2>
+
+            <TransactionList
+                transactions={transactions}
+            />
         </div>
     );
 }

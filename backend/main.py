@@ -11,9 +11,10 @@ Base.metadata.create_all(bind=engine)
 
 origins = [
     "http://localhost:3000",
-    "http://localhost:5173",
+    "http://localhost:5173",  # For Vite-React Server
 ]
 
+# Need to add this to allow server-to-server communication.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

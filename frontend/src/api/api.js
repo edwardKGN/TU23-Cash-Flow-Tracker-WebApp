@@ -8,9 +8,14 @@ const API = axios.create({
 export const fetchTransactions = async () => {
     const res = await API.get("/transactions");  // Follow the routes declared by FastAPI
     return res.data;
-  };
+};
   
-  export const createTransaction = async (data) => {
+export const createTransaction = async (data) => {
     const res = await API.post("/transactions", data);  // Follow the routes declared by FastAPI
     return res.data;
-  };
+};
+
+export const fetchSummary = async () => {
+    const res = await API.get("/summary");
+    return res.data;
+}

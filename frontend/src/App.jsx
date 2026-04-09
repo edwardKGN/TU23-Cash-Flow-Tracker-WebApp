@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTransactions, createTransaction } from "../api/api";
+import { fetchTransactions, createTransaction, fetchSummary } from "./api/api";
 import { useState } from "react";
 
 import TransactionForm from "./components/TransactionForm";
@@ -17,6 +17,7 @@ function App() {
         mutationFn: createTransaction,
         onSuccess: () => {
             queryClient.invalidateQueries(["transactions"]);
+            queryClient.invalidateQueries(["summary"]);  // Inform that summary is stale and need to be refetched
         },
     });
 
@@ -30,7 +31,6 @@ function App() {
     });
 
     const handleSubmit = () => {
-
         if (!form.amount) return;  // If no value to skip
 
         mutation.mutate({
@@ -49,6 +49,11 @@ function App() {
           });
     };
 
+    const { data: summary } = useQuery({
+        queryKey: ["summary"],
+        queryFn: fetchSummary,
+    });
+
     return (
         <div>
             <h1>Cash Flow Tracker</h1>
@@ -66,6 +71,11 @@ function App() {
             <TransactionList
                 transactions={transactions}
             />
+
+            <h2>Summary</h2>
+            <p>Income: {summary?.income}</p>
+            <p>Expense: {summary?.expense}</p>
+            <p>Net: {summary?.net}</p>
         </div>
     );
 }

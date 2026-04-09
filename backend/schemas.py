@@ -19,3 +19,8 @@ class SummaryResponse(BaseModel):
     income: float
     expense: float
     net: float
+
+# Category Aggregation
+class CategorySummary(BaseModel):
+    category:str
+    total: float

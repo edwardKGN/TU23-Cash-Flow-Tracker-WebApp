@@ -19,3 +19,8 @@ export const fetchSummary = async () => {
     const res = await API.get("/summary");
     return res.data;
 }
+
+export const fetchCategorySummary = async () => {
+    const res = await API.get("/summary/by-category");
+    return res.data;
+};

@@ -1,9 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTransactions, createTransaction, fetchSummary } from "./api/api";
+import { fetchTransactions, createTransaction, fetchSummary, fetchCategorySummary } from "./api/api";
 import { useState } from "react";
 
 import TransactionForm from "./components/TransactionForm";
 import TransactionList from "./components/TransactionList";
+
+import ExpensePieChart from "./components/ExpensePieChart";
 
 function App() {
     const queryClient = useQueryClient();
@@ -18,6 +20,7 @@ function App() {
         onSuccess: () => {
             queryClient.invalidateQueries(["transactions"]);
             queryClient.invalidateQueries(["summary"]);  // Inform that summary is stale and need to be refetched
+            queryClient.invalidateQueries(["category-summary"]);
         },
     });
 
@@ -54,6 +57,11 @@ function App() {
         queryFn: fetchSummary,
     });
 
+    const { data: categoryData = []} = useQuery({
+        queryKey: ["category-summary"],
+        queryFn: fetchCategorySummary,
+    });
+
     return (
         <div>
             <h1>Cash Flow Tracker</h1>
@@ -76,6 +84,9 @@ function App() {
             <p>Income: {summary?.income}</p>
             <p>Expense: {summary?.expense}</p>
             <p>Net: {summary?.net}</p>
+
+            <h2>Overall Expense Distribution</h2>
+            <ExpensePieChart data={categoryData}/>
         </div>
     );
 }

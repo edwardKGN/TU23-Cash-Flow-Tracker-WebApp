@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from sqlalchemy import select, func
 
 from models import SessionLocal, Transaction
-from schemas import TransactionCreate, TransactionResponse, SummaryResponse
+from schemas import TransactionCreate, TransactionResponse, SummaryResponse, CategorySummary
 
 router = APIRouter()
 
@@ -59,3 +59,21 @@ def get_summary():
         "net": income - expense
     }
     
+# Category Summarization
+@router.get("/summary/by-category", response_model=list[CategorySummary])
+def summary_by_category():
+    session = SessionLocal()
+
+    results = session.execute(
+        select(
+            Transaction.category,
+            func.sum(Transaction.amount).label("total")
+            ).where(Transaction.transaction_type == "expense").group_by(Transaction.category)
+            ).all()
+
+    session.close()
+
+    return [
+        {"category": r[0] or "Uncategrorized", "total": r[1]} 
+        for r in results
+    ]

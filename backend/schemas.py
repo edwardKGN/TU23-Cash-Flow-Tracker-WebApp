@@ -3,7 +3,7 @@ from typing import Optional
 
 class TransactionCreate(BaseModel):
     amount: float
-    type: str
+    transaction_type: str
     category: Optional[str] = None
     description: Optional[str] = None
 

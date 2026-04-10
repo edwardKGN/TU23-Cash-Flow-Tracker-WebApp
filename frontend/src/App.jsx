@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTransactions, createTransaction, fetchSummary, fetchCategorySummary, fetchTypeSummary } from "./api/api";
+import { fetchTransactions, createTransaction, fetchSummary, fetchCategorySummary, fetchTypeSummary, fetchMonthlySummary } from "./api/api";
 import { useState } from "react";
 
 import TransactionForm from "./components/TransactionForm";
@@ -7,6 +7,7 @@ import TransactionList from "./components/TransactionList";
 
 import ExpensePieChart from "./components/ExpensePieChart";
 import TypePieChart from "./components/TypePieChart";
+import MonthlyChart from "./components/MonthlyChart";
 
 function App() {
     const queryClient = useQueryClient();
@@ -83,6 +84,14 @@ function App() {
         queryFn: () => fetchTypeSummary(filters),
     });
 
+    const { data: monthlyData = []} = useQuery({
+        queryKey: ["monthly-summary", filters.year],
+        queryFn: () => fetchMonthlySummary(filters.year),
+        enabled: !!filters.year, // Only active if year filter is available
+    });
+
+    const sortedMonthlyData = [...monthlyData].sort((a, b) => a.month - b.month);
+
     return (
         <div>
             <h1>Cash Flow Tracker</h1>
@@ -135,6 +144,10 @@ function App() {
 
             <h2>Income vs Expense Distribution</h2>
             <TypePieChart data={typeData}/>
+
+            <h2>Monthly Income vs Expense</h2>
+            <MonthlyChart data={sortedMonthlyData} />
+
         </div>
     );
 }

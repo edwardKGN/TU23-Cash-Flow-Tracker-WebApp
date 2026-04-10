@@ -45,3 +45,11 @@ export const fetchTypeSummary = async (filters) => {
 
     return res.data;
 };
+
+export const fetchMonthlySummary = async (year) => {
+    const res = await API.get("/summary/monthly", {
+        params: { year },
+    });
+
+    return res.data;
+}

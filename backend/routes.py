@@ -127,3 +127,44 @@ def summary_by_type(
         {"transaction_type": "expense", "total": summary["expense"]}
     ]
 
+# Monthly Summary
+@router.get("/summary/monthly")
+def monthly_summary(year: int):
+    session = SessionLocal()
+
+    stmt = select(
+        func.extract('month', Transaction.date).label("month"),
+        Transaction.transaction_type,
+        func.sum(Transaction.amount).label("total")
+    ).where(
+        func.extract('year', Transaction.date) == year
+    ).group_by(
+        "month",
+        Transaction.transaction_type
+    )
+
+    results = session.execute(stmt).all()
+
+    session.close()
+
+    summary = {}
+
+    for month, t_type, total in results:
+        month = int(month)
+
+        if month not in summary:
+            summary[month] = {
+                "month": month,
+                "income": 0,
+                "expense": 0
+            }
+        
+        summary[month][t_type] = total
+
+    # Cover missing months for plotting continuous line-chart
+    for m in range(1, 13):
+        if m not in summary:
+            summary[m] = {"month": m, "income": 0, "expense": 0}
+    # NOTE Data will be out of order. Need to re-order at front-end
+    
+    return list(summary.values())

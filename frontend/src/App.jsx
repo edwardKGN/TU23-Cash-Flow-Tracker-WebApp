@@ -3,11 +3,14 @@ import { fetchTransactions, createTransaction, fetchSummary, fetchCategorySummar
 import { useState } from "react";
 
 import TransactionForm from "./components/TransactionForm";
-import TransactionList from "./components/TransactionList";
 
-import ExpensePieChart from "./components/ExpensePieChart";
-import TypePieChart from "./components/TypePieChart";
-import MonthlyChart from "./components/MonthlyChart";
+import Filters from "./components/Filters";
+
+import SummaryCards from "./components/SummaryCards";
+
+import ChartsGrid from "./components/ChartsGrid";
+
+import TransactionList from "./components/TransactionList";
 
 function App() {
     const queryClient = useQueryClient();
@@ -93,7 +96,7 @@ function App() {
     const sortedMonthlyData = [...monthlyData].sort((a, b) => a.month - b.month);
 
     return (
-        <div>
+        <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
             <h1>Cash Flow Tracker</h1>
 
             <h2>Transaction Input</h2>
@@ -104,41 +107,32 @@ function App() {
                 onAdd={handleSubmit}
             />
 
+            <h2>Summary</h2>
+            <SummaryCards summary={summary}/>
+
+            <h2>Filter</h2>
+            <Filters filters={filters} setFilters={setFilters}/>
+
+            <h2>Charts</h2>
+            <ChartsGrid 
+                categoryData={categoryData}
+                typeData={typeData}
+                monthlyData={sortedMonthlyData}
+            />
+
             <h2>Transactions Recorded</h2>
 
             <TransactionList
                 transactions={transactions}
             />
 
-            <h2>Summary</h2>
-            <p>Income: {summary?.income}</p>
-            <p>Expense: {summary?.expense}</p>
-            <p>Net: {summary?.net}</p>
+        </div>
+    );
+}
 
-            <h2>Filter</h2>
-            <select
-                value={filters.month}
-                onChange={(e) =>
-                    setFilters({ 
-                        ...filters, 
-                        month: e.target.value ? parseInt(e.target.value): "" // Need to convert to integer for reference
-                    })
-                } 
-            >
-                <option value="">All Months</option>
-                <option value="1">Jan</option>
-                <option value="2">Feb</option>
-                <option value="4">Apr</option>
-            </select>
+export default App
 
-            <input 
-                type="number"
-                value={filters.year}
-                onChange={(e) =>
-                    setFilters({ ...filters, year: e.target.value })
-                } 
-            />
-
+/*
             <h2>Overall Expense Distribution</h2>
             <ExpensePieChart data={categoryData}/>
 
@@ -147,9 +141,4 @@ function App() {
 
             <h2>Monthly Income vs Expense</h2>
             <MonthlyChart data={sortedMonthlyData} />
-
-        </div>
-    );
-}
-
-export default App
+*/

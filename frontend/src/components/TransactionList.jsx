@@ -3,7 +3,7 @@ function TransactionList({transactions}) {
         <div>
             <ul>
                 {transactions.map((t) => (
-                        <li key={t.id}>{t.transaction_type}: {t.amount} - {t.category} ({t.description})</li>
+                        <li key={t.id}>{t.date} | {t.transaction_type} | {t.amount} | {t.category}</li>
                 ))}
             </ul>
         </div>

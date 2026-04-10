@@ -3,6 +3,9 @@ import { PieChart, Pie, Sector, Tooltip, Legend } from "recharts";
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A28AFF"];
 
 function ExpensePieChart( {data} ) {
+
+    // TODO if data not available to report no data present
+    
     const coloredData = data.map((entry, index) => ({
         ...entry,
         fill: COLORS[index % COLORS.length]

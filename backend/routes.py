@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from sqlalchemy import select, func
 
 from models import SessionLocal, Transaction
@@ -11,7 +11,7 @@ router = APIRouter()
 @router.post("/transactions", response_model=TransactionResponse)
 def create_transaction(transaction: TransactionCreate):
     session = SessionLocal()
-    db_transaction = Transaction(**transaction.dict())
+    db_transaction = Transaction(**transaction.dict(exclude_unset=True))
 
     session.add(db_transaction)
     session.commit()
@@ -61,15 +61,27 @@ def get_summary():
     
 # Category Summarization
 @router.get("/summary/by-category", response_model=list[CategorySummary])
-def summary_by_category():
+def summary_by_category(
+    year: int = Query(None),
+    month: int = Query(None)
+):
     session = SessionLocal()
 
-    results = session.execute(
-        select(
-            Transaction.category,
-            func.sum(Transaction.amount).label("total")
-            ).where(Transaction.transaction_type == "expense").group_by(Transaction.category)
-            ).all()
+    stmt = select(
+        Transaction.category,
+        func.sum(Transaction.amount).label("total")
+        ).where(Transaction.transaction_type == "expense")
+    
+    # Apply filters
+    if year:
+        stmt = stmt.where(func.extract('year', Transaction.date) == year)
+    
+    if month:
+        stmt = stmt.where(func.extract('month', Transaction.date) == month)
+
+    stmt = stmt.group_by(Transaction.category)
+
+    results = session.execute(stmt).all()
 
     session.close()
 

@@ -15,13 +15,46 @@ if __name__ == """__main__""":
     
     # print(f"income > {income}")
 
-    results = session.execute(
-            select(
-                Transaction.category,
-                func.sum(Transaction.amount).label("total")
-                ).where(Transaction.transaction_type == "expense").group_by(Transaction.category)
-                ).all()
+    # Retrieve and Group Expenses together
+    # results = session.execute(
+    #         select(
+    #             Transaction.category,
+    #             func.sum(Transaction.amount).label("total")
+    #             ).where(Transaction.transaction_type == "expense").group_by(Transaction.category)
+    #             ).all()
     
+
+    # print(f"results > {results}")
+
+    # dict_category_grp = [
+    #     {"category": r[0] or "Uncategrorized", "total": r[1]} 
+    #     for r in results
+    # ]
+
+    # Get All
+    # transactions = session.scalars(select(Transaction)).all()
+
+    # print(f"transactions > {transactions}")
+
+    # Retrieve and Group Expenses together, and then filter by year and/or month
+    year = '2026'
+    month = '3'
+
+    stmt = select(
+        Transaction.category,
+        func.sum(Transaction.amount).label("total")
+        ).where(Transaction.transaction_type == "expense")
+    
+    # Apply filters
+    if year:
+        stmt = stmt.where(func.extract('year', Transaction.date) == year)
+    
+    if month:
+        stmt = stmt.where(func.extract('month', Transaction.date) == month)
+
+    stmt = stmt.group_by(Transaction.category)
+
+    results = session.execute(stmt).all()
 
     print(f"results > {results}")
 

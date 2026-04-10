@@ -57,10 +57,23 @@ function App() {
         queryFn: fetchSummary,
     });
 
-    const { data: categoryData = []} = useQuery({
-        queryKey: ["category-summary"],
-        queryFn: fetchCategorySummary,
+    const [filters, setFilters] = useState({
+        year: 2026,
+        month: "",
     });
+
+    // No filter only group by category
+    // const { data: categoryData = []} = useQuery({
+    //     queryKey: ["category-summary"],
+    //     queryFn: fetchCategorySummary,  // Previously used > this works as it implicitly implies that I am providing a function.
+    // });
+
+    const { data: categoryData = []} = useQuery({
+        queryKey: ["category-summary", filters],
+        queryFn: () => fetchCategorySummary(filters),  // Previously used > queryFn: fetchCategorySummary(filters) was returning result not the function. need to manually wrap it in an in-line function as done now for it to work
+    });
+
+    console.log("categoryData > ", categoryData)
 
     return (
         <div>
@@ -86,6 +99,30 @@ function App() {
             <p>Net: {summary?.net}</p>
 
             <h2>Overall Expense Distribution</h2>
+            
+            <select
+                value={filters.month}
+                onChange={(e) =>
+                    setFilters({ 
+                        ...filters, 
+                        month: e.target.value ? parseInt(e.target.value): "" // Need to convert to integer for reference
+                    })
+                } 
+            >
+                <option value="">All Months</option>
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="4">Apr</option>
+            </select>
+
+            <input 
+                type="number"
+                value={filters.year}
+                onChange={(e) =>
+                    setFilters({ ...filters, year: e.target.value })
+                } 
+            />
+
             <ExpensePieChart data={categoryData}/>
         </div>
     );

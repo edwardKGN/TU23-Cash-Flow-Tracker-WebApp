@@ -31,3 +31,8 @@ class SummaryResponse(BaseModel):
 class CategorySummary(BaseModel):
     category:str
     total: float
+
+# Type Aggregation
+class TypeSummary(BaseModel):
+    transaction_type:str
+    total: float

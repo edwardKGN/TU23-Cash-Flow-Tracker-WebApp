@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTransactions, createTransaction, fetchSummary, fetchCategorySummary } from "./api/api";
+import { fetchTransactions, createTransaction, fetchSummary, fetchCategorySummary, fetchTypeSummary } from "./api/api";
 import { useState } from "react";
 
 import TransactionForm from "./components/TransactionForm";
 import TransactionList from "./components/TransactionList";
 
 import ExpensePieChart from "./components/ExpensePieChart";
+import TypePieChart from "./components/TypePieChart";
 
 function App() {
     const queryClient = useQueryClient();
@@ -21,6 +22,7 @@ function App() {
             queryClient.invalidateQueries(["transactions"]);
             queryClient.invalidateQueries(["summary"]);  // Inform that summary is stale and need to be refetched
             queryClient.invalidateQueries(["category-summary"]);
+            queryClient.invalidateQueries(["type-summary"]);
         },
     });
 
@@ -73,7 +75,13 @@ function App() {
         queryFn: () => fetchCategorySummary(filters),  // Previously used > queryFn: fetchCategorySummary(filters) was returning result not the function. need to manually wrap it in an in-line function as done now for it to work
     });
 
-    console.log("categoryData > ", categoryData)
+    // DEBUG
+    // console.log("categoryData > ", categoryData)
+
+    const { data: typeData = []} = useQuery({
+        queryKey: ["category-type", filters],
+        queryFn: () => fetchTypeSummary(filters),
+    });
 
     return (
         <div>
@@ -98,8 +106,7 @@ function App() {
             <p>Expense: {summary?.expense}</p>
             <p>Net: {summary?.net}</p>
 
-            <h2>Overall Expense Distribution</h2>
-            
+            <h2>Filter</h2>
             <select
                 value={filters.month}
                 onChange={(e) =>
@@ -123,7 +130,11 @@ function App() {
                 } 
             />
 
+            <h2>Overall Expense Distribution</h2>
             <ExpensePieChart data={categoryData}/>
+
+            <h2>Income vs Expense Distribution</h2>
+            <TypePieChart data={typeData}/>
         </div>
     );
 }

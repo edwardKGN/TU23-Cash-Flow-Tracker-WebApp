@@ -2,7 +2,7 @@ from fastapi import APIRouter, Query
 from sqlalchemy import select, func
 
 from models import SessionLocal, Transaction
-from schemas import TransactionCreate, TransactionResponse, SummaryResponse, CategorySummary
+from schemas import TransactionCreate, TransactionResponse, SummaryResponse, CategorySummary, TypeSummary
 
 router = APIRouter()
 
@@ -89,3 +89,41 @@ def summary_by_category(
         {"category": r[0] or "Uncategrorized", "total": r[1]} 
         for r in results
     ]
+
+# Type Summarization
+@router.get("/summary/by-type", response_model=list[TypeSummary])
+def summary_by_type(
+    year: int = Query(None),
+    month: int = Query(None)
+):
+    session = SessionLocal()
+
+    stmt = select(
+        Transaction.transaction_type,
+        func.sum(Transaction.amount).label("total")
+        )
+    
+    # Apply filters
+    if year:
+        stmt = stmt.where(func.extract('year', Transaction.date) == year)
+    
+    if month:
+        stmt = stmt.where(func.extract('month', Transaction.date) == month)
+
+    stmt = stmt.group_by(Transaction.transaction_type)
+
+    results = session.execute(stmt).all()
+
+    session.close()
+
+    # Configure this to ensure both income and expense types are always listed
+    summary = {"income": 0, "expense": 0}
+
+    for t, total in results:
+        summary[t] = total
+
+    return[
+        {"transaction_type": "income", "total": summary["income"]},  # Ensure that return matches pydantic as well
+        {"transaction_type": "expense", "total": summary["expense"]}
+    ]
+

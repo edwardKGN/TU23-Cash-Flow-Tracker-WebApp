@@ -29,6 +29,19 @@ export const fetchCategorySummary = async (filters) => {
     const res = await API.get("/summary/by-category", {
         params: cleanedFilters,
     });
-    
+
+    return res.data;
+};
+
+export const fetchTypeSummary = async (filters) => {
+    // If receive "" to remove from filters
+    const cleanedFilters = Object.fromEntries(
+        Object.entries(filters).filter(([_, v]) => v !== "")
+    )
+
+    const res = await API.get("/summary/by-type", {
+        params: cleanedFilters,
+    });
+
     return res.data;
 };

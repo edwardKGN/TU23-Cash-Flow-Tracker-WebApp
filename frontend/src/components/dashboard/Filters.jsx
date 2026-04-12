@@ -1,6 +1,6 @@
 function Filters({ filters, setFilters }) {
     return (
-        <div>
+        <div className="flex flex-wrap gap-4 bg-white p-4 rounded-2xl shadow">
             <select
                 value={filters.month}
                 onChange={(e) =>

@@ -1,3 +1,5 @@
+import { formatCurrency } from "../../utils/format";
+
 function Card({ title, value }) {
     return(
         <div style={{
@@ -12,12 +14,17 @@ function Card({ title, value }) {
     );
 }
 
-function SummaryCards({ summary }) {
+function SummaryCards({ summaryQuery }) {
+    const data = summaryQuery.data
+
+    if (summaryQuery.isLoading) return <p>Loading data</p>
+    if (summaryQuery.error) return <>Error loading data</>
+
     return (
         <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
-            <Card title="Income" value={summary?.income}/>
-            <Card title="Expense" value={summary?.income}/>
-            <Card title="Net" value={summary?.income}/>
+            <Card title="Income" value={formatCurrency(data?.income)}/>
+            <Card title="Expense" value={formatCurrency(data?.expense)}/>
+            <Card title="Net" value={formatCurrency(data?.net)}/>
         </div>
     )
 }

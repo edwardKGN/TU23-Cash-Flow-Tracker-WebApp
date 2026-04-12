@@ -1,8 +1,8 @@
-import ExpensePieChart from "./ExpensePieChart";
-import TypePieChart from "./TypePieChart";
-import MonthlyChart from "./MonthlyChart";
+import ExpensePieChart from "../charts/ExpensePieChart";
+import TypePieChart from "../charts/TypePieChart";
+import MonthlyChart from "../charts/MonthlyChart";
 
-function ChartsGrid({ categoryData, typeData, monthlyData }) {
+function ChartsGrid({ categoryQuery, typeQuery, monthlyQuery }) {
     return (
         <div style={{
             display: "grid",
@@ -12,17 +12,17 @@ function ChartsGrid({ categoryData, typeData, monthlyData }) {
           }}>
             <div>
                 <h3>Expenses by Category</h3>
-                <ExpensePieChart data={categoryData}/>
+                <ExpensePieChart query={categoryQuery}/>
             </div>
 
             <div>
                 <h3>Income vs Expense</h3>
-                <TypePieChart data={typeData} />
+                <TypePieChart query={typeQuery} />
             </div>
 
             <div>
                 <h3>Monthly Trend</h3>
-                <MonthlyChart data={monthlyData} />
+                <MonthlyChart query={monthlyQuery} />
             </div>
         </div>
     )

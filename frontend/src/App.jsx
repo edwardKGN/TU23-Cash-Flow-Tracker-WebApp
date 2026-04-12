@@ -1,24 +1,34 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchTransactions, createTransaction, fetchSummary, fetchCategorySummary, fetchTypeSummary, fetchMonthlySummary } from "./api/api";
+import { fetchTransactions, createTransaction, fetchSummary, fetchCategorySummary, fetchTypeSummary, fetchMonthlySummary } from "./api/transactions";
 import { useState } from "react";
 
-import TransactionForm from "./components/TransactionForm";
+import useDashboardData from "./hook/useDashboardData";
 
-import Filters from "./components/Filters";
+import TransactionForm from "./components/dashboard/TransactionForm";
 
-import SummaryCards from "./components/SummaryCards";
+import Filters from "./components/dashboard/Filters";
 
-import ChartsGrid from "./components/ChartsGrid";
+import SummaryCards from "./components/dashboard/SummaryCards";
 
-import TransactionList from "./components/TransactionList";
+import ChartsGrid from "./components/dashboard/ChartsGrid";
+
+import TransactionList from "./components/dashboard/TransactionList";
 
 function App() {
-    const queryClient = useQueryClient();
-
-    const { data: transactions = [] } = useQuery({
-        queryKey: ["transactions"],
-        queryFn: fetchTransactions,
+    const [filters, setFilters] = useState({
+        year: 2026,
+        month: "",
     });
+
+    const {
+        transactionsQuery,
+        summaryQuery,
+        categoryQuery,
+        typeQuery,
+        monthlyQuery
+    } = useDashboardData(filters);
+
+    const queryClient = useQueryClient();
 
     const mutation = useMutation({
         mutationFn: createTransaction,
@@ -58,43 +68,6 @@ function App() {
           });
     };
 
-    const { data: summary } = useQuery({
-        queryKey: ["summary"],
-        queryFn: fetchSummary,
-    });
-
-    const [filters, setFilters] = useState({
-        year: 2026,
-        month: "",
-    });
-
-    // No filter only group by category
-    // const { data: categoryData = []} = useQuery({
-    //     queryKey: ["category-summary"],
-    //     queryFn: fetchCategorySummary,  // Previously used > this works as it implicitly implies that I am providing a function.
-    // });
-
-    const { data: categoryData = []} = useQuery({
-        queryKey: ["category-summary", filters],
-        queryFn: () => fetchCategorySummary(filters),  // Previously used > queryFn: fetchCategorySummary(filters) was returning result not the function. need to manually wrap it in an in-line function as done now for it to work
-    });
-
-    // DEBUG
-    // console.log("categoryData > ", categoryData)
-
-    const { data: typeData = []} = useQuery({
-        queryKey: ["category-type", filters],
-        queryFn: () => fetchTypeSummary(filters),
-    });
-
-    const { data: monthlyData = []} = useQuery({
-        queryKey: ["monthly-summary", filters.year],
-        queryFn: () => fetchMonthlySummary(filters.year),
-        enabled: !!filters.year, // Only active if year filter is available
-    });
-
-    const sortedMonthlyData = [...monthlyData].sort((a, b) => a.month - b.month);
-
     return (
         <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
             <h1>Cash Flow Tracker</h1>
@@ -108,22 +81,22 @@ function App() {
             />
 
             <h2>Summary</h2>
-            <SummaryCards summary={summary}/>
+            <SummaryCards summaryQuery={summaryQuery}/>
 
             <h2>Filter</h2>
             <Filters filters={filters} setFilters={setFilters}/>
 
             <h2>Charts</h2>
             <ChartsGrid 
-                categoryData={categoryData}
-                typeData={typeData}
-                monthlyData={sortedMonthlyData}
+                categoryQuery={categoryQuery}
+                typeQuery={typeQuery}
+                monthlyQuery={monthlyQuery}
             />
 
             <h2>Transactions Recorded</h2>
 
             <TransactionList
-                transactions={transactions}
+                transactionsQuery={transactionsQuery}
             />
 
         </div>
@@ -131,14 +104,3 @@ function App() {
 }
 
 export default App
-
-/*
-            <h2>Overall Expense Distribution</h2>
-            <ExpensePieChart data={categoryData}/>
-
-            <h2>Income vs Expense Distribution</h2>
-            <TypePieChart data={typeData}/>
-
-            <h2>Monthly Income vs Expense</h2>
-            <MonthlyChart data={sortedMonthlyData} />
-*/

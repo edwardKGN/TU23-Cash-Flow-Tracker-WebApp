@@ -2,11 +2,12 @@ import { PieChart, Pie, Sector, Tooltip, Legend } from "recharts";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A28AFF"];
 
-function TypePieChart( {data} ) {
+function TypePieChart( {query} ) {
 
-    // TODO if data not available to report no data present
+    if (query.isLoading) return <p>Data is loading...</p>
+    if (query.error) return <p>Error loading data</p>
     
-    const coloredData = data.map((entry, index) => ({
+    const coloredData = query.data.map((entry, index) => ({
         ...entry,
         fill: COLORS[index % COLORS.length]
     })); // Manually assign color fill for each data for Legend to refer to

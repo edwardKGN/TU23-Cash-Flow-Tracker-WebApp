@@ -1,4 +1,10 @@
-function TransactionList({transactions}) {
+function TransactionList({ transactionsQuery }) {
+
+    const transactions = transactionsQuery.data
+
+    if (transactionsQuery.isLoading) return <p>Data is loading...</p>
+    if (transactionsQuery.error) return <p>Error in loading data</p>
+
     return (
         <div>
             <ul>

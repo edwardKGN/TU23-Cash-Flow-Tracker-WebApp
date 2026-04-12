@@ -1,9 +1,17 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
-function MonthlyChart({ data }) {
+function MonthlyChart({ query }) {
+
+    if (query.isLoading) return <p>Data is loading...</p>
+    if (query.error) return <p>Error loading data</p>
+
+    // console.log("query > ", query)
+
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-    data = data.map(d => ({
+    const sortedMonthlyData = [...query.data].sort((a, b) => a.month - b.month);
+    
+    const data = sortedMonthlyData.map(d => ({
         ...d, 
         monthLabel: monthNames[d.month -1]
     }))

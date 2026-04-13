@@ -25,3 +25,14 @@ class Transaction(Base):
 
     def __repr__(self) -> str:
         return f"Transaction(id={self.id!r}, date={self.date!r}, amount={self.amount!r}, transaction_type={self.transaction_type!r}, category={self.category!r}"
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(unique=True)
+    password_hash: Mapped[str]
+
+    def __repr__(self) -> str:
+        return f"User(id={self.id!r}, username={self.username!r}, password_hash={self.password_hash!r}"

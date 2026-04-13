@@ -1,10 +1,34 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, HTTPException, Depends
+from fastapi.security import HTTPBearer
 from sqlalchemy import select, func
 
-from models import SessionLocal, Transaction
-from schemas import TransactionCreate, TransactionResponse, SummaryResponse, CategorySummary, TypeSummary
+from models import SessionLocal, Transaction, User
+from schemas import TransactionCreate, TransactionResponse, SummaryResponse, CategorySummary, TypeSummary, UserCreate, UserLogin
+from auth import hash_password, verify_password
+
+from jose import jwt
+from datetime import datetime, timedelta
+
+SECRET_KEY = "your-secret-key"
+ALGORITHM = "HS256"
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(hours=1)
+
+    to_encode.update({"exp": expire})
+
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 router = APIRouter()
+security = HTTPBearer()
+
+def get_current_user(token=Depends(security)):
+    try:
+        payload = jwt.decode(token.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload["sub"]
+    except:
+        raise HTTPException(status_code=401,detail="Invalid token")
 
 # CRUD OPS
 # CREATE transaction
@@ -168,3 +192,42 @@ def monthly_summary(year: int):
     # NOTE Data will be out of order. Need to re-order at front-end
     
     return list(summary.values())
+
+# Authentication System
+@router.post("/register")
+def register(user: UserCreate):
+    session = SessionLocal()
+
+    hashed_pw = hash_password(user.password)
+
+    new_user = User(
+        username=user.username,
+        password_hash=hashed_pw
+    )
+
+    session.add(new_user)
+    session.commit()
+    session.close()
+
+    return {"message": "User created"}
+
+@router.post("/login")  # TODO Test LOGIN
+def login(user: UserLogin):
+    session = SessionLocal()
+
+    db_user = session.scalar(
+        select(User).where(User.username == user.username)
+        )
+
+    # print(f"user > {user}, db_user > {db_user}")
+
+    if not db_user or not verify_password(
+        user.password, db_user.password_hash
+    ):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    token = create_access_token({"sub": db_user.username})
+
+    session.close()
+
+    return {"access_token": token}

@@ -36,3 +36,12 @@ class CategorySummary(BaseModel):
 class TypeSummary(BaseModel):
     transaction_type:str
     total: float
+
+# User Authentication System
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str

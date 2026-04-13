@@ -1,15 +1,25 @@
 import { formatCurrency } from "../../utils/format";
 
-function Card({ title, value }) {
+import {
+    Wallet,
+    ArrowUpRight,
+    ArrowDownLeft,
+    TrendingUp,
+    PieChart,
+    Calendar
+  } from "lucide-react";
+
+function Card({ title, value, icon: Icon, color }) {
+    const colors = {
+        green: "text-green-500",
+        red: "text-red-500",
+        blue: "text-blue-500",
+    };
+
     return(
-        <div style={{
-            padding: "20px",
-            border: "1px solid #ddd",
-            borderRadius: "10px",
-            width: "150px"
-          }}>
-            <h4>{title}</h4>
-            <p>{value}</p>
+        <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow">
+            <h4 className="text-sm text-gray-500">{title}</h4>
+            <p className={`flex items-center gap-2 text-xl font-bold ${colors[color]}`}> <Icon className={`w-6 h-6 ${colors[color]}`} /> {value}</p>
         </div>
     );
 }
@@ -21,10 +31,25 @@ function SummaryCards({ summaryQuery }) {
     if (summaryQuery.error) return <>Error loading data</>
 
     return (
-        <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
-            <Card title="Income" value={formatCurrency(data?.income)}/>
-            <Card title="Expense" value={formatCurrency(data?.expense)}/>
-            <Card title="Net" value={formatCurrency(data?.net)}/>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Card 
+                title="Income"
+                value={formatCurrency(data?.income)}
+                icon={ArrowUpRight}
+                color="green"
+            />
+            <Card 
+                title="Expense"
+                value={formatCurrency(data?.expense)}
+                icon={ArrowDownLeft}
+                color="red"
+            />
+            <Card
+                title="Net"
+                value={formatCurrency(data?.net)}
+                icon={Wallet}
+                color="blue"
+            />
         </div>
     )
 }

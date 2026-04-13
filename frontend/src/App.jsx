@@ -1,7 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchTransactions, createTransaction, fetchSummary, fetchCategorySummary, fetchTypeSummary, fetchMonthlySummary } from "./api/transactions";
+
 import { useState } from "react";
+
 import './App.css'
+
+import {
+    Wallet,
+    ArrowUpRight,
+    ArrowDownLeft,
+    TrendingUp,
+    PieChart,
+    Calendar
+  } from "lucide-react";
 
 import useDashboardData from "./hook/useDashboardData";
 
@@ -16,6 +27,8 @@ import ChartsGrid from "./components/dashboard/ChartsGrid";
 import TransactionList from "./components/dashboard/TransactionList";
 
 function App() {
+    const [dark, setDark]= useState(false);
+
     const [filters, setFilters] = useState({
         year: 2026,
         month: "",
@@ -70,15 +83,11 @@ function App() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 p-6">
-            <div className="bg-red-500 text-white p-4">
-                Tailwind is working
-            </div>
-            
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 space-y-6 gap-6">
             <div className="max-w-7xl mx-auto space-y-6">
-                <h1 className="text-3xl font-bold">Cash Flow Tracker</h1>
+                <h1 className="text-3xl font-bold tracking-tight">Cash Flow Tracker</h1>
 
-                <h2>Transaction Input</h2>
+                <h2 className="font-semibold mb-4">Transaction Input</h2>
 
                 <TransactionForm 
                     form={form}
@@ -86,24 +95,28 @@ function App() {
                     onAdd={handleSubmit}
                 />
 
-                <h2>Summary</h2>
+                <h2 className="font-semibold mb-4">Summary</h2>
                 <SummaryCards summaryQuery={summaryQuery}/>
 
                 <h2>Filter</h2>
                 <Filters filters={filters} setFilters={setFilters}/>
 
-                <h2>Charts</h2>
+                <h2 className="font-semibold mb-4">Charts</h2>
                 <ChartsGrid 
                     categoryQuery={categoryQuery}
                     typeQuery={typeQuery}
                     monthlyQuery={monthlyQuery}
                 />
 
-                <h2>Transactions Recorded</h2>
+                <h2 className="font-semibold mb-4">Transactions Recorded</h2>
 
                 <TransactionList
                     transactionsQuery={transactionsQuery}
                 />
+
+                <div className="bg-red-500 text-white p-4">
+                    Tailwind is working
+                </div>
 
             </div>
         </div>

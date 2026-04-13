@@ -2,28 +2,34 @@ import ExpensePieChart from "../charts/ExpensePieChart";
 import TypePieChart from "../charts/TypePieChart";
 import MonthlyChart from "../charts/MonthlyChart";
 
+function Card({ title, children }) {
+    return (
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow">
+        <h3 className="font-semibold mb-4">{title}</h3>
+        {children}
+      </div>
+    );
+  }
+
+
 function ChartsGrid({ categoryQuery, typeQuery, monthlyQuery }) {
     return (
-        <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "20px",
-            marginBottom: "20px"
-          }}>
-            <div>
-                <h3>Expenses by Category</h3>
-                <ExpensePieChart query={categoryQuery}/>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <Card 
+                title="Expenses by Category" 
+                children={<ExpensePieChart query={categoryQuery} />}
+            />
 
-            <div>
-                <h3>Income vs Expense</h3>
-                <TypePieChart query={typeQuery} />
-            </div>
+            <Card 
+                title="Income vs Expense" 
+                children={<TypePieChart query={typeQuery} />}
+            />
 
-            <div>
-                <h3>Monthly Trend</h3>
-                <MonthlyChart query={monthlyQuery} />
-            </div>
+            <Card 
+                title="Monthly Trend"
+                children={<MonthlyChart query={monthlyQuery} />}
+            />
         </div>
     )
 };

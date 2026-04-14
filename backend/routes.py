@@ -215,3 +215,22 @@ def login(user: UserLogin):
     session.close()
 
     return {"access_token": token}
+
+
+@router.get("/me")
+def get_me(user = Depends(get_current_user)):
+    # print(f"user > {user}")
+    
+    session = SessionLocal()
+
+    existing_user = session.scalar(select(User).where(User.username == user))
+
+    session.close()
+
+    if existing_user is None:
+        raise HTTPException(status_code=400, detail="User does not exist")
+
+    return {
+        "id": existing_user.id,
+        "username": existing_user.username
+    }

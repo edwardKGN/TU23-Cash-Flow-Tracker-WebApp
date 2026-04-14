@@ -62,11 +62,22 @@ function Dashboard ({}) {
         summaryQuery,
         categoryQuery,
         typeQuery,
-        monthlyQuery
+        monthlyQuery,
+        userQuery
     } = useDashboardData(filters);
+
+    const username = userQuery.data?.username;
+    // console.log("userQuery > ", userQuery)
+    // console.log("username > ", username)
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
+            <div className="flex items-center gap-3">
+                <span className="text-sm text-gray-500">
+                👤 {username || "Loading..."}
+                </span>
+            </div>
+
             <h1 className="text-3xl font-bold tracking-tight">Cash Flow Tracker</h1>
 
             <h2 className="font-semibold mb-4">Transaction Input</h2>

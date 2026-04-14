@@ -10,7 +10,28 @@ function RegisterPage({ onSwitchToLogin }){
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    const handleSubmit = async () => {
+    const validateForm = () => {
+        if (!form.username.trim()) {
+            return "Username is required"
+        }
+
+        if (form.password.length < 3) {
+            return "Password must be at least 3 characters"
+        }
+
+        return null;
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const validationError = validateForm();
+
+        if (validationError) {
+            setError(validationError)
+            return;
+        }
+
         try {
             await registerUser(form);
 
@@ -51,7 +72,7 @@ function RegisterPage({ onSwitchToLogin }){
                 Register
                 </button>
 
-                {/* 🔥 Feedback */}
+                {/* Feedback */}
                 {error && <p className="text-red-500">{error}</p>}
                 {success && <p className="text-green-500">{success}</p>}
 

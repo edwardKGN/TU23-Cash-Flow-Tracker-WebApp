@@ -8,7 +8,32 @@ function LoginPage( { onLogin, onSwitchToRegister }) {
         password: ""
     });
 
-    const handleSubmit = async () => {
+    const validateForm = () => {
+        if (!form.username.trim()) {
+            return "Username is required"
+        }
+
+        if (form.password.length < 3) {
+            return "Password must be at least 3 characters"
+        }
+
+        return null;
+    }
+
+    const [error, setError] = useState("");
+    // const [success, setSuccess] = useState("");
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const validationError = validateForm();
+
+        if (validationError) {
+            setError(validationError)
+            return;
+        }
+        
+
         const res = await loginUser(form);
         localStorage.setItem("token", res.access_token);
         onLogin();
@@ -40,6 +65,9 @@ function LoginPage( { onLogin, onSwitchToRegister }) {
             >
             Login
             </button>
+
+            {/* Feedback */}
+            {error && <p className="text-red-500">{error}</p>}
 
             <button
                 onClick={onSwitchToRegister}

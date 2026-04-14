@@ -6,7 +6,8 @@ import {
     fetchSummary,
     fetchCategorySummary,
     fetchTypeSummary,
-    fetchMonthlySummary
+    fetchMonthlySummary,
+    fetchCurrentUser
 } from "../api/transactions";
 
 function useDashboardData(filters) {
@@ -46,12 +47,18 @@ function useDashboardData(filters) {
         enabled: !!filters.year, // Only active if year filter is available
     });
 
+    const userQuery = useQuery({
+        queryKey: ["current-user"],
+        queryFn: fetchCurrentUser,
+    });
+
     return {
         transactionsQuery,
         summaryQuery,
         categoryQuery,
         typeQuery,
-        monthlyQuery
+        monthlyQuery,
+        userQuery
     }
 };
 

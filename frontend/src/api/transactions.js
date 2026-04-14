@@ -62,7 +62,12 @@ export const loginUser = async (data) => {
     return res.data;
 }
 
-export const registerUser = async (data) =>{
+export const registerUser = async (data) => {
     const res = await API.post("/register", data)
+    return res.data;
+}
+
+export const fetchCurrentUser = async (data) => {
+    const res = await API.get("/me", data)
     return res.data;
 }

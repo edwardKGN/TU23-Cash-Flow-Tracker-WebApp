@@ -176,6 +176,12 @@ def monthly_summary(year: int):
 def register(user: UserCreate):
     session = SessionLocal()
 
+    existing_user = session.execute(select(User).where(User.username == user.username)).first()
+
+    if existing_user:
+        session.close()
+        raise HTTPException(status_code=400, detail="Username taken")
+
     hashed_pw = hash_password(user.password)
 
     new_user = User(

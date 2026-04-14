@@ -6,6 +6,7 @@ import LoginPage from "./components/pages/LoginPage";
 
 import LogoutButton from "./components/dashboard/LogoutButton";
 import Dashboard from "./components/pages/Dashboard";
+import RegisterPage from "./components/pages/RegisterPage";
 
 function App() {
     // const [amount, setAmount] = useState("");
@@ -14,8 +15,24 @@ function App() {
         !!localStorage.getItem("token")
     );
 
+    const [mode, setMode] = useState("login");
+
     if (!loggedIn) {
-        return <LoginPage onLogin={() => setLoggedIn(true)} />
+        if (mode === "login") {
+            return (
+                <LoginPage 
+                    onLogin={() => setLoggedIn(true)}
+                    onSwitchToRegister={() => setMode("register")} 
+                />
+            )
+        }
+
+        return (
+            <RegisterPage
+                onSwitchToLogin={() => setMode("login")}
+            />
+        )
+
     }
 
     return (

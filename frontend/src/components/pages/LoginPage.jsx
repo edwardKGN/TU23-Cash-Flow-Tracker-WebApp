@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { loginUser } from "../../api/transactions";
 
-function LoginPage( { onLogin }) {
+function LoginPage( { onLogin, onSwitchToRegister }) {
     const [form, setForm] = useState({
         username: "",
         password: ""
@@ -39,6 +39,13 @@ function LoginPage( { onLogin }) {
                 className="bg-blue-500 text-white px-4 py-2 rounded"
             >
             Login
+            </button>
+
+            <button
+                onClick={onSwitchToRegister}
+                className="text-blue-500 underline"
+            >
+            Create Account
             </button>
         </div>
     </div>

@@ -1,34 +1,12 @@
 from fastapi import APIRouter, Query, HTTPException, Depends
-from fastapi.security import HTTPBearer
+
 from sqlalchemy import select, func
 
 from models import SessionLocal, Transaction, User
 from schemas import TransactionCreate, TransactionResponse, SummaryResponse, CategorySummary, TypeSummary, UserCreate, UserLogin
-from auth import hash_password, verify_password
-
-from jose import jwt
-from datetime import datetime, timedelta
-
-SECRET_KEY = "your-secret-key"
-ALGORITHM = "HS256"
-
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(hours=1)
-
-    to_encode.update({"exp": expire})
-
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+from auth import hash_password, verify_password, create_access_token, get_current_user
 
 router = APIRouter()
-security = HTTPBearer()
-
-def get_current_user(token=Depends(security)):
-    try:
-        payload = jwt.decode(token.credentials, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload["sub"]
-    except:
-        raise HTTPException(status_code=401,detail="Invalid token")
 
 # CRUD OPS
 # CREATE transaction

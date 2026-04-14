@@ -1,8 +1,10 @@
-import axios from "axios";
+// import axios from "axios";
 
-const API = axios.create({
-    baseURL: "http://127.0.0.1:8000", // URL where FastAPI is hosted. 
-});
+// const API = axios.create({
+//     baseURL: "http://127.0.0.1:8000", // URL where FastAPI is hosted. 
+// });
+
+import API from "./api.js"
 
 // NOTE FastAPI declared actions
 export const fetchTransactions = async () => {
@@ -51,5 +53,11 @@ export const fetchMonthlySummary = async (year) => {
         params: { year },
     });
 
+    return res.data;
+}
+
+// Authentication
+export const loginUser = async (data) => {
+    const res = await API.post("/login", data)
     return res.data;
 }

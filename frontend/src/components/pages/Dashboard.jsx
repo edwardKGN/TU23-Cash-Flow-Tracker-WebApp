@@ -106,10 +106,12 @@ function Dashboard ({}) {
             <TransactionList
                 transactionsQuery={transactionsQuery}
             />
-
+            
+            {/* 
             <div className="bg-red-500 text-white p-4">
                     Tailwind is working
-            </div>
+            </div> 
+            */}
         </div>
     )
 }

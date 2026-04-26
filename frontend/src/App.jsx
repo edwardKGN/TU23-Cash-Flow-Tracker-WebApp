@@ -4,7 +4,6 @@ import './App.css'
 
 import LoginPage from "./components/pages/LoginPage";
 
-import LogoutButton from "./components/dashboard/LogoutButton";
 import Dashboard from "./components/pages/Dashboard";
 import RegisterPage from "./components/pages/RegisterPage";
 
@@ -20,17 +19,21 @@ function App() {
     if (!loggedIn) {
         if (mode === "login") {
             return (
-                <LoginPage 
-                    onLogin={() => setLoggedIn(true)}
-                    onSwitchToRegister={() => setMode("register")} 
-                />
+                <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 space-y-6 gap-6">
+                    <LoginPage 
+                        onLogin={() => setLoggedIn(true)}
+                        onSwitchToRegister={() => setMode("register")} 
+                    />
+                </div>
             )
         }
 
         return (
-            <RegisterPage
-                onSwitchToLogin={() => setMode("login")}
-            />
+            <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 space-y-6 gap-6">
+                <RegisterPage
+                    onSwitchToLogin={() => setMode("login")}
+                />
+            </div>
         )
 
     }

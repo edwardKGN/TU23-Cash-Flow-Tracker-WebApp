@@ -47,6 +47,7 @@ Users can input income and expenses, which are stored in the database and retrie
 ## Results / Screenshots
 
 ![Login](screenshots/LoginPage.png)
+![Register](screenshots/RegisterPage.png)
 ![Dashboard1](screenshots/Dashboard1.png)
 ![Dashboard2](screenshots/Dashboard2.png)
 ![Dashboard3](screenshots/Dashboard3.png)

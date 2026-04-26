@@ -45,7 +45,11 @@ npm run dev
 Users can input income and expenses, which are stored in the database and retrieved via API endpoints to generate visual insights into spending patterns.
 
 ## Results / Screenshots
-refer to /screenshots
+
+![Login](screenshots/LoginPage.png)
+![Dashboard1](screenshots/Dashboard1.png)
+![Dashboard2](screenshots/Dashboard2.png)
+![Dashboard3](screenshots/Dashboard3.png)
 
 ## Future Improvements
 - Deploy to cloud (e.g., Render / AWS)
